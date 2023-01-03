@@ -5,6 +5,10 @@ import random
 from nba_api.live.nba.endpoints import scoreboard
 from PIL import Image
 
+f = open('config.json')
+config = json.load(f)
+nbaToken = config["nbaToken"]
+
 teams = {
     "Celtics": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8f/Boston_Celtics.svg/800px-Boston_Celtics.svg.png",
     "Nets": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bkn.png",
@@ -56,7 +60,7 @@ async def player(ctx, first, last):
     # Nba player stats API
     querystring = {"search": f"{first.capitalize()} {last.capitalize()}"}
     headers = {
-        "X-RapidAPI-Key": "0f8a813faamshf7d8137be85ca9cp1179ebjsn5783fd30d438",
+        "X-RapidAPI-Key": f"{nbaToken}",
         "X-RapidAPI-Host": "free-nba.p.rapidapi.com"
     }
     stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()
@@ -87,7 +91,7 @@ async def rand(ctx):
     # Nba player stats API
     querystring = {"search": f"{firstName} {lastName}"}
     headers = {
-        "X-RapidAPI-Key": "0f8a813faamshf7d8137be85ca9cp1179ebjsn5783fd30d438",
+        "X-RapidAPI-Key": f"{nbaToken}",
         "X-RapidAPI-Host": "free-nba.p.rapidapi.com"
     }
     stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()
@@ -125,7 +129,7 @@ async def guard(ctx):
     # Nba player stats API
     querystring = {"search": f"{firstName} {lastName}"}
     headers = {
-        "X-RapidAPI-Key": "0f8a813faamshf7d8137be85ca9cp1179ebjsn5783fd30d438",
+        "X-RapidAPI-Key": f"{nbaToken}",
         "X-RapidAPI-Host": "free-nba.p.rapidapi.com"
     }
     stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()
@@ -159,7 +163,7 @@ async def forward(ctx):
     # Nba player stats API
     querystring = {"search": f"{firstName} {lastName}"}
     headers = {
-        "X-RapidAPI-Key": "0f8a813faamshf7d8137be85ca9cp1179ebjsn5783fd30d438",
+        "X-RapidAPI-Key": f"{nbaToken}",
         "X-RapidAPI-Host": "free-nba.p.rapidapi.com"
     }
     stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()
@@ -193,7 +197,7 @@ async def center(ctx):
     # Nba player stats API
     querystring = {"search": f"{firstName} {lastName}"}
     headers = {
-        "X-RapidAPI-Key": "0f8a813faamshf7d8137be85ca9cp1179ebjsn5783fd30d438",
+        "X-RapidAPI-Key": f"{nbaToken}",
         "X-RapidAPI-Host": "free-nba.p.rapidapi.com"
     }
     stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()

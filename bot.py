@@ -3,7 +3,8 @@ from settings import *
 from account import *
 from nbaReddit import *
 
-TOKEN = "MTAxMjM4NzI5MjM5ODIzMTU1Mw.GVFhXO.wBc-FJMJtz2YCYQPRoOGoK1j3F_ycXLD_bhlBQ"
+f = open('config.json')
+config = json.load(f)
 
 
 @bot.command()
@@ -29,5 +30,4 @@ async def test(ctx):
         print(game)
 
 
-
-bot.run(TOKEN)
+bot.run(config["botToken"])
