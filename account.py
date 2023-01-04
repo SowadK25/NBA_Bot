@@ -2,9 +2,12 @@ from settings import *
 import requests
 import json
 
-airtableID = "appmF1e84AaE0CsoD"
+f = open('config.json')
+config = json.load(f)
+
+airtableID = config['airtableID']
 airtableTableName = "accounts"
-airtableAPIKey = "keynLe6h0HLjhsbOO"
+airtableAPIKey = config['airtableToken']
 endpoint = f"https://api.airtable.com/v0/{airtableID}/{airtableTableName}"
 
 # request headers
