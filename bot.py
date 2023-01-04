@@ -2,6 +2,7 @@ from nbaAPI import *
 from settings import *
 from account import *
 from nbaReddit import *
+from nba_api.stats.endpoints import commonplayerinfo
 
 f = open('config.json')
 config = json.load(f)
@@ -11,23 +12,13 @@ config = json.load(f)
 @commands.cooldown(1, 5, commands.BucketType.user)
 async def test(ctx):
     await ctx.send("Hi sarim")
-    em = discord.Embed(title="Cool",
-                           colour=discord.Colour.dark_blue())
-    em.set_thumbnail(
-        url=f"{teams['Mavericks']}")
-    # Today's Score Board
-    await ctx.send(embed=em)
-    games = scoreboard.ScoreBoard()
+    games = commonplayerinfo.CommonPlayerInfo(player_id='203999')
 
     # json
     j = games.get_json()
     print(j)
 
-    # dictionary
-    d = games.get_dict()
-    stuff = d['scoreboard']['games']
-    for game in stuff:
-        print(game)
+
 
 
 bot.run(config["botToken"])

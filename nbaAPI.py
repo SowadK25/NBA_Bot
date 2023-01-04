@@ -38,14 +38,14 @@ teams = {
     "Clippers": "https://s.yimg.com/it/api/res/1.2/gKyPp665PsPlIuWx5UK2WQ--~A/YXBwaWQ9eW5ld3M7dz0xMjAwO2g9NjMwO3E9MTAw/https://s.yimg.com/cv/apiv2/default/nba/20181218/500x500/clippers_wbg.png",
     "Lakers": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Los_Angeles_Lakers_logo.svg/1280px-Los_Angeles_Lakers_logo.svg.png",
     "Suns": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/phx.png",
-    "Kings": "https://upload.wikimedia.org/wikipedia/en/thumb/c/c7/SacramentoKings.svg/800px-SacramentoKings.svg.png",
+    "Kings": "https://logos-world.net/wp-content/uploads/2020/05/Sacramento-Kings-logo.png",
 
     "Mavericks": "https://upload.wikimedia.org/wikipedia/en/thumb/9/97/Dallas_Mavericks_logo.svg/800px-Dallas_Mavericks_logo.svg.png",
     "Rockets": "https://upload.wikimedia.org/wikipedia/en/thumb/2/28/Houston_Rockets.svg/800px-Houston_Rockets.svg.png",
     "Grizzlies": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/mem.png",
     "Pelicans": "https://upload.wikimedia.org/wikipedia/en/thumb/0/0d/New_Orleans_Pelicans_logo.svg/1200px-New_Orleans_Pelicans_logo.svg.png",
     "Spurs": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/sa.png"
-    }
+}
 
 
 @bot.command()
@@ -188,7 +188,8 @@ async def center(ctx):
     js = img.json()
     data = js['league']['standard']
     selectedPlayer = random.choice(data)
-    while str(selectedPlayer['pos']) != "C" and str(selectedPlayer['pos']) != "F-C" and str(selectedPlayer['pos']) != "C-F":
+    while str(selectedPlayer['pos']) != "C" and str(selectedPlayer['pos']) != "F-C" and str(
+            selectedPlayer['pos']) != "C-F":
         selectedPlayer = random.choice(data)
     playerID = selectedPlayer['personId']
     firstName = selectedPlayer['firstName'].capitalize()
@@ -274,8 +275,8 @@ def create_image(game):
     t1 = Image.open(requests.get(f"{teams[game['awayTeam']['teamName']]}", stream=True).raw)
     t2 = Image.open(requests.get(f"{teams[game['homeTeam']['teamName']]}", stream=True).raw)
     # resize, first image
-    t1 = t1.resize((100, 100))
-    t2 = t2.resize((100, 100))
+    t1 = t1.resize((300, 300))
+    t2 = t2.resize((300, 300))
     t1_size = t1.size
     new_image = Image.new('RGB', (2 * t1_size[0], t1_size[1]), (250, 250, 250))
     new_image.paste(t1, (0, 0))
@@ -301,11 +302,21 @@ def scores_embed(game):
                        colour=choose_color(game['homeTeam']['teamTricode']))
     file = discord.File("thing.png", filename="thing.png")
     em.set_thumbnail(url="attachment://thing.png")
+    em.add_field(name=f"{game['awayTeam']['teamTricode']}: (W-L)",
+                 value=f"{game['awayTeam']['wins']}-{game['awayTeam']['losses']}", inline=True)
+    em.add_field(name=f"{game['homeTeam']['teamTricode']}: (W-L)",
+                 value=f"{game['homeTeam']['wins']}-{game['homeTeam']['losses']}")
     em.add_field(name="Game Status", value=f"{game['gameStatusText']}", inline=False)
-    em.add_field(name=f"{game['awayTeam']['teamTricode']}: (W-L)", value=f"{game['awayTeam']['wins']}-{game['awayTeam']['losses']}", inline=True)
-    em.add_field(name=f"{game['homeTeam']['teamTricode']}: (W-L)", value=f"{game['homeTeam']['wins']}-{game['homeTeam']['losses']}")
     if game['gameStatus'] != 1:
         em.add_field(name="Score", value=f"{game['awayTeam']['score']}-{game['homeTeam']['score']}", inline=False)
+        em.add_field(name="Game Leaders", value='\u200b', inline=False)
+        em.add_field(name=f"{game['awayTeam']['teamCity']}", value=f"{game['awayTeam']['teamName']}")
+        em.add_field(name=f"{game['homeTeam']['teamCity']}", value=f"{game['homeTeam']['teamName']}")
+        em.add_field(name='\u200b', value='\u200b', inline=False)
+        em.add_field(name=f"{game['gameLeaders']['awayLeaders']['name']}",
+                     value=f"> Points: {game['gameLeaders']['awayLeaders']['points']}\n> Assists: {game['gameLeaders']['awayLeaders']['assists']}\n> Rebounds: {game['gameLeaders']['awayLeaders']['rebounds']}")
+        em.add_field(name=f"{game['gameLeaders']['homeLeaders']['name']}",
+                     value=f"> Points: {game['gameLeaders']['homeLeaders']['points']}\n> Assists: {game['gameLeaders']['homeLeaders']['assists']}\n> Rebounds: {game['gameLeaders']['homeLeaders']['rebounds']}")
     return [em, file]
 
 
