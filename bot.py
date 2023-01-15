@@ -17,6 +17,10 @@ async def test(ctx):
     # json
     j = games.get_json()
     print(j)
+    dc = games.get_dict()
+    print(dc['resultSets'][0])
+    print(dc['resultSets'][1])
+    print(dc['resultSets'][0]['rowSet'][0][7])
 
 
 

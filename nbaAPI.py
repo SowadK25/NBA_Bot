@@ -3,6 +3,8 @@ from account import *
 import requests
 import random
 from nba_api.live.nba.endpoints import scoreboard
+from nba_api.stats.endpoints import commonplayerinfo
+from datetime import datetime
 from PIL import Image
 
 f = open('config.json')
@@ -54,6 +56,7 @@ async def player(ctx, first, last):
     img = requests.get("http://data.nba.net/data/10s/prod/v1/2022/players.json")
     js = img.json()
     playerID = ""
+    plyr = commonplayerinfo.CommonPlayerInfo(player_id='203999')  # Dummy value
     playerFound = False
     data = js['league']['standard']
 
@@ -68,12 +71,13 @@ async def player(ctx, first, last):
     for pl in data:
         if pl['firstName'].lower() == first.lower() and pl['lastName'].lower() == last.lower():
             playerID = pl['personId']
+            plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID}")
             playerFound = True
     if not playerFound:
         em = discord.Embed(title="Player not Found")
         await ctx.send(embed=em)
     else:
-        em = create_embed(stats, playerID, first, last)
+        em = create_embed(stats, playerID, first, last, plyr)
         await ctx.send(embed=em)
 
 
@@ -85,6 +89,7 @@ async def rand(ctx):
     data = js['league']['standard']
     selectedPlayer = random.choice(data)
     playerID = selectedPlayer['personId']
+    plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID }")  # Dummy value
     firstName = selectedPlayer['firstName'].capitalize()
     lastName = selectedPlayer['lastName'].capitalize()
 
@@ -98,6 +103,7 @@ async def rand(ctx):
     while not stats['data']:
         selectedPlayer = random.choice(data)
         playerID = selectedPlayer['personId']
+        plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID}")  # Dummy value
         firstName = selectedPlayer['firstName'].capitalize()
         lastName = selectedPlayer['lastName'].capitalize()
 
@@ -105,7 +111,7 @@ async def rand(ctx):
         querystring = {"search": f"{firstName} {lastName}"}
         stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()
 
-    em = create_embed(stats, playerID, firstName, lastName)
+    em = create_embed(stats, playerID, firstName, lastName, plyr)
     await ctx.send(embed=em)
     addPlayer(ctx.author.id, f"{firstName} {lastName}")
     if stats['data'][0]['team']['abbreviation'] == "TOR":
@@ -123,6 +129,7 @@ async def guard(ctx):
     while str(selectedPlayer['pos']) != "G" and str(selectedPlayer['pos']) != "G-F":
         selectedPlayer = random.choice(data)
     playerID = selectedPlayer['personId']
+    plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID}")  # Dummy value
     firstName = selectedPlayer['firstName'].capitalize()
     lastName = selectedPlayer['lastName'].capitalize()
 
@@ -136,6 +143,7 @@ async def guard(ctx):
     while not stats['data']:
         selectedPlayer = random.choice(data)
         playerID = selectedPlayer['personId']
+        plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID}")  # Dummy value
         firstName = selectedPlayer['firstName'].capitalize()
         lastName = selectedPlayer['lastName'].capitalize()
 
@@ -143,7 +151,7 @@ async def guard(ctx):
         querystring = {"search": f"{firstName} {lastName}"}
         stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()
 
-    em = create_embed(stats, playerID, firstName, lastName)
+    em = create_embed(stats, playerID, firstName, lastName, plyr)
     await ctx.send(embed=em)
 
 
@@ -157,6 +165,7 @@ async def forward(ctx):
     while str(selectedPlayer['pos']) != "F" and str(selectedPlayer['pos']) != "F-G":
         selectedPlayer = random.choice(data)
     playerID = selectedPlayer['personId']
+    plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID}")  # Dummy value
     firstName = selectedPlayer['firstName'].capitalize()
     lastName = selectedPlayer['lastName'].capitalize()
 
@@ -170,6 +179,7 @@ async def forward(ctx):
     while not stats['data']:
         selectedPlayer = random.choice(data)
         playerID = selectedPlayer['personId']
+        plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID}")  # Dummy value
         firstName = selectedPlayer['firstName'].capitalize()
         lastName = selectedPlayer['lastName'].capitalize()
 
@@ -177,7 +187,7 @@ async def forward(ctx):
         querystring = {"search": f"{firstName} {lastName}"}
         stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()
 
-    em = create_embed(stats, playerID, firstName, lastName)
+    em = create_embed(stats, playerID, firstName, lastName, plyr)
     await ctx.send(embed=em)
 
 
@@ -192,6 +202,7 @@ async def center(ctx):
             selectedPlayer['pos']) != "C-F":
         selectedPlayer = random.choice(data)
     playerID = selectedPlayer['personId']
+    plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID}")  # Dummy value
     firstName = selectedPlayer['firstName'].capitalize()
     lastName = selectedPlayer['lastName'].capitalize()
 
@@ -205,6 +216,7 @@ async def center(ctx):
     while not stats['data']:
         selectedPlayer = random.choice(data)
         playerID = selectedPlayer['personId']
+        plyr = commonplayerinfo.CommonPlayerInfo(player_id=f"{playerID}")  # Dummy value
         firstName = selectedPlayer['firstName'].capitalize()
         lastName = selectedPlayer['lastName'].capitalize()
 
@@ -212,20 +224,26 @@ async def center(ctx):
         querystring = {"search": f"{firstName} {lastName}"}
         stats = requests.get("https://free-nba.p.rapidapi.com/players", headers=headers, params=querystring).json()
 
-    em = create_embed(stats, playerID, firstName, lastName)
+    em = create_embed(stats, playerID, firstName, lastName, plyr)
     await ctx.send(embed=em)
 
 
-def create_embed(stats, id, first, last):
+def create_embed(stats, id, first, last, plyr):
+    player_dict = plyr.get_dict()
+    player_info = player_dict['resultSets'][0]['rowSet'][0]
+    player_stats = player_dict['resultSets'][1]
+    cur_year = datetime.now().year
+    birth_year = player_info[7]
+    by = birth_year[0:4]
+    age = int(cur_year) - int(by)
     em = discord.Embed(title=f"{first.capitalize()} {last.capitalize()}",
                        colour=choose_color(stats['data'][0]['team']['abbreviation']))
     em.set_thumbnail(
         url=f"https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/{id}.png")
-    if stats['data'][0]['height_feet'] is None or stats['data'][0]['height_inches'] is None:
-        em.add_field(name="Height (in)", value="Not found")
-    else:
-        em.add_field(name="Height (in)", value=f"{stats['data'][0]['height_feet']}'{stats['data'][0]['height_inches']}")
-    em.add_field(name="Weight (lbs)", value=f"{stats['data'][0]['weight_pounds']}", inline=True)
+
+    em.add_field(name="Height (in)", value=f"{player_info[11]}")
+    em.add_field(name="Weight (lbs)", value=f"{player_info[12]}", inline=True)
+    em.add_field(name="Age", value=f"{age}", inline=True)
     em.add_field(name="Position", value=f"{stats['data'][0]['position']}", inline=False)
     em.add_field(name="Team",
                  value=f"{stats['data'][0]['team']['full_name']} ({stats['data'][0]['team']['abbreviation']})",
