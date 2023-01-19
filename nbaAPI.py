@@ -231,7 +231,7 @@ async def center(ctx):
 def create_embed(stats, id, first, last, plyr):
     player_dict = plyr.get_dict()
     player_info = player_dict['resultSets'][0]['rowSet'][0]
-    player_stats = player_dict['resultSets'][1]
+    player_stats = player_dict['resultSets'][1]['rowSet'][0]
     cur_year = datetime.now().year
     birth_year = player_info[7]
     by = birth_year[0:4]
@@ -248,8 +248,17 @@ def create_embed(stats, id, first, last, plyr):
     em.add_field(name="Team",
                  value=f"{stats['data'][0]['team']['full_name']} ({stats['data'][0]['team']['abbreviation']})",
                  inline=False)
+    em.add_field(name="Jersey #", value=f"{player_info[14]}", inline=False)
     em.add_field(name="Conference", value=f"{stats['data'][0]['team']['conference']}")
     em.add_field(name="Division", value=f"{stats['data'][0]['team']['division']}", inline=True)
+    em.add_field(name="School/Nationality", value=f"{player_info[8]}/{player_info[9]}", inline=False)
+    em.add_field(name="Draft Year", value=f"{player_info[29]}")
+    if player_info[29] == "Undrafted":
+        em.add_field(name="Draft Position", value=f"Undrafted")
+    else:
+        em.add_field(name="Draft Position", value=f"Round: {player_info[30]}, Pick: {player_info[31]}")
+    em.add_field(name="Season Averages",
+                 value=f"> Points: {player_stats[3]}\n> Assists: {player_stats[4]}\n> Rebounds: {player_stats[5]}", inline=False)
     return em
 
 
@@ -327,10 +336,9 @@ def scores_embed(game):
     em.add_field(name="Game Status", value=f"{game['gameStatusText']}", inline=False)
     if game['gameStatus'] != 1:
         em.add_field(name="Score", value=f"{game['awayTeam']['score']}-{game['homeTeam']['score']}", inline=False)
-        em.add_field(name="Game Leaders", value='\u200b', inline=False)
-        em.add_field(name=f"{game['awayTeam']['teamCity']}", value=f"{game['awayTeam']['teamName']}")
-        em.add_field(name=f"{game['homeTeam']['teamCity']}", value=f"{game['homeTeam']['teamName']}")
-        em.add_field(name='\u200b', value='\u200b', inline=False)
+        # em.add_field(name=f"{game['awayTeam']['teamCity']}", value=f"{game['awayTeam']['teamName']}")
+        # em.add_field(name=f"{game['homeTeam']['teamCity']}", value=f"{game['homeTeam']['teamName']}")
+        em.add_field(name="<----- Game Leaders ----->", value='\u200b', inline=False)
         em.add_field(name=f"{game['gameLeaders']['awayLeaders']['name']}",
                      value=f"> Points: {game['gameLeaders']['awayLeaders']['points']}\n> Assists: {game['gameLeaders']['awayLeaders']['assists']}\n> Rebounds: {game['gameLeaders']['awayLeaders']['rebounds']}")
         em.add_field(name=f"{game['gameLeaders']['homeLeaders']['name']}",
