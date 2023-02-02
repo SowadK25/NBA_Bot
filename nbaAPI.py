@@ -38,7 +38,7 @@ teams = {
 
     "Warriors": "https://upload.wikimedia.org/wikipedia/en/thumb/0/01/Golden_State_Warriors_logo.svg/1200px-Golden_State_Warriors_logo.svg.png",
     "Clippers": "https://s.yimg.com/it/api/res/1.2/gKyPp665PsPlIuWx5UK2WQ--~A/YXBwaWQ9eW5ld3M7dz0xMjAwO2g9NjMwO3E9MTAw/https://s.yimg.com/cv/apiv2/default/nba/20181218/500x500/clippers_wbg.png",
-    "Lakers": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Los_Angeles_Lakers_logo.svg/1280px-Los_Angeles_Lakers_logo.svg.png",
+    "Lakers": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Los_Angeles_Lakers_logo.svg/1200px-Los_Angeles_Lakers_logo.svg.png",
     "Suns": "https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/phx.png",
     "Kings": "https://logos-world.net/wp-content/uploads/2020/05/Sacramento-Kings-logo.png",
 
